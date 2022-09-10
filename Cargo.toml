@@ -11,6 +11,11 @@ wasm-bindgen = { version = "0.2.82", features = ["serde-serialize"] }
 wasm-bindgen-futures = "0.4.32"
 web-sys = "0.3.59"
 yew = "0.19"
+ybc = "0.2"
+
+[[bin]]
+name = "snappy-ui"
+path = "yew/main.rs"
 
 [workspace]
-members = ["src-tauri"]
+members = ["tauri"]
