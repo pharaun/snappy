@@ -78,6 +78,26 @@ struct Snapshot {
     to_dir: String,
 }
 
+
+fn dir_picker(label: String, path: String) -> Html {
+    html! {
+        <>
+        <label class="label">{label}</label>
+        <div class="file has-name is-right is-fullwidth">
+          <label class="file-label">
+            <input class="file-input" type="text" name="resume" />
+            <span class="file-cta">
+              <span class="file-icon"><ion-icon name="folder-outline"></ion-icon></span>
+              <span class="file-label">{"Choose a directory…"}</span>
+            </span>
+            <span class="file-name">{path}</span>
+          </label>
+        </div>
+        </>
+    }
+}
+
+
 #[function_component(App)]
 pub fn app() -> Html {
     let snaps = vec![
@@ -86,56 +106,115 @@ pub fn app() -> Html {
             from_dir: "c://foobar/minecraft".to_string(),
             to_dir: "/nas//asdf".to_string(),
         },
-        Snapshot {
-            name: "valheim".to_string(),
-            from_dir: "c://foobar/valheim".to_string(),
-            to_dir: "/nas//asdf".to_string(),
-        },
     ];
 
-    let snap_html = snaps.iter().map(|snap| html! {
+    // Edit mode html i think
+    let snap_edit = snaps.iter().map(|snap| html! {
         <div class="container is-fluid block">
             <div class="notification">
-                <span class="icon-text">
-                    <span><h1 class="title">{snap.name.clone()}</h1></span>
-                    <p class="buttons ml-2">
-                        <button class="button">
-                            <span class="icon">
-                                <span class="icon">
-                                    <ion-icon name="create-outline" size="large"></ion-icon>
-                                </span>
-                            </span>
-                        </button>
-                    </p>
-                </span>
+                <nav class="level">
+                    <div class="level-left">
+                        <div class="level-item">
+                            <h1 class="title">{"NAME"}</h1>
+                        </div>
+                    </div>
 
-                <label class="label">{"Snapshot from"}</label>
-                <div class="file has-name is-right is-fullwidth">
-                  <label class="file-label">
-                    <input class="file-input" type="text" name="resume" />
-                    <span class="file-cta">
-                      <span class="file-icon"><ion-icon name="folder-outline"></ion-icon></span>
-                      <span class="file-label">{"Choose a directory…"}</span>
-                    </span>
-                    <span class="file-name">{snap.from_dir.clone()}</span>
-                  </label>
-                </div>
+                    <div class="level-right">
+                        <p class="level-item"><a class="button">{"Edit"}</a></p>
+                        <p class="level-item"><a class="button is-success">{"Run"}</a></p>
+                    </div>
+                </nav>
 
-                <label class="label">{"Snapshot to"}</label>
-                <div class="file has-name is-right is-fullwidth">
-                  <label class="file-label">
-                    <input class="file-input" type="text" name="resume" />
-                    <span class="file-cta">
-                      <span class="file-icon"><ion-icon name="folder-outline"></ion-icon></span>
-                      <span class="file-label">{"Choose a directory…"}</span>
-                    </span>
-                    <span class="file-name">{snap.to_dir.clone()}</span>
-                  </label>
-                </div>
+                <form class="box">
+                    <div class="block">
+                        {dir_picker(
+                            "Name".to_string(),
+                            snap.name.clone(),
+                        )}
+
+                        {dir_picker(
+                            "Snapshot from".to_string(),
+                            snap.from_dir.clone(),
+                        )}
+
+                        {dir_picker(
+                            "Snapshot to".to_string(),
+                            snap.to_dir.clone(),
+                        )}
+                    </div>
+
+                    <div class="field is-grouped is-grouped-right">
+                        <p class="control">
+                            <button class="button is-link">{"Save"}</button>
+                        </p>
+                        <p class="control">
+                            <button class="button">{"Cancel"}</button>
+                        </p>
+                        <p class="control">
+                            <button class="button is-danger">{"Delete"}</button>
+                        </p>
+                    </div>
+                </form>
 
             </div>
         </div>
     }).collect::<Html>();
+
+    // Rest mode html
+    let snap_rest = html! {
+        <div class="container is-fluid block">
+            <div class="notification">
+
+                <nav class="level">
+                    <div class="level-left">
+                        <div class="level-item">
+                            <h1 class="title">{"NAME"}</h1>
+                        </div>
+                    </div>
+
+                    <div class="level-right">
+                        <p class="level-item"><a class="button">{"Edit"}</a></p>
+                        <p class="level-item"><a class="button is-success">{"Run"}</a></p>
+                    </div>
+                </nav>
+
+            </div>
+        </div>
+    };
+
+    // running mode html
+    let snap_running = html! {
+        <div class="container is-fluid block">
+            <div class="notification">
+
+                <nav class="level">
+                    <div class="level-left">
+                        <div class="level-item">
+                            <h1 class="title">{"NAME"}</h1>
+                        </div>
+                    </div>
+
+                    <div class="level-right">
+                        <p class="level-item"><a class="button">{"Edit"}</a></p>
+                        <p class="level-item"><a class="button is-success is-loading">{"Run"}</a></p>
+                    </div>
+                </nav>
+
+                <form class="box">
+                    <div class="block">
+                        <div class="control">
+                            <textarea class="textarea" readonly=true>{"Log linesmore logs"}</textarea>
+                        </div>
+                    </div>
+                    <div class="field is-grouped is-grouped-right">
+                        <p class="control">
+                            <button class="button is-danger">{"Cancel"}</button>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    };
 
     html! {
         <>
@@ -145,7 +224,9 @@ pub fn app() -> Html {
             </div>
         </section>
         <section class="section">
-            {snap_html}
+            {snap_rest}
+            {snap_edit}
+            {snap_running}
         </section>
         </>
     }
