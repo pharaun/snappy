@@ -12,12 +12,13 @@ extern "C" {
     fn log(s: &str);
 }
 
+
+/*
 #[derive(Serialize, Deserialize)]
 struct GreetArgs<'a> {
     name: &'a str,
 }
 
-#[function_component(App)]
 pub fn app() -> Html {
     let greet_input_ref = use_ref(|| NodeRef::default());
 
@@ -59,33 +60,93 @@ pub fn app() -> Html {
     };
 
     html! {
-        <main class="container">
-            <div class="row">
-                <a href="https://tauri.app" target="_blank">
-                    <img src="public/tauri.svg" class="logo tauri" alt="Tauri logo"/>
-                </a>
-                <a href="https://yew.rs" target="_blank">
-                    <img src="public/yew.png" class="logo yew" alt="Yew logo"/>
-                </a>
+        <div class="row">
+            <input id="greet-input" ref={&*greet_input_ref} placeholder="Enter a name..." />
+            <button type="button" onclick={greet}>{"Greet"}</button>
+        </div>
+
+        <p><b>{ &*greet_msg }</b></p>
+    }
+}
+*/
+
+
+#[derive(Serialize, Deserialize)]
+struct Snapshot {
+    name: String,
+    from_dir: String,
+    to_dir: String,
+}
+
+#[function_component(App)]
+pub fn app() -> Html {
+    let snaps = vec![
+        Snapshot {
+            name: "minecraft".to_string(),
+            from_dir: "c://foobar/minecraft".to_string(),
+            to_dir: "/nas//asdf".to_string(),
+        },
+        Snapshot {
+            name: "valheim".to_string(),
+            from_dir: "c://foobar/valheim".to_string(),
+            to_dir: "/nas//asdf".to_string(),
+        },
+    ];
+
+    let snap_html = snaps.iter().map(|snap| html! {
+        <div class="container is-fluid block">
+            <div class="notification">
+                <span class="icon-text">
+                    <span><h1 class="title">{snap.name.clone()}</h1></span>
+                    <p class="buttons ml-2">
+                        <button class="button">
+                            <span class="icon">
+                                <span class="icon">
+                                    <ion-icon name="create-outline" size="large"></ion-icon>
+                                </span>
+                            </span>
+                        </button>
+                    </p>
+                </span>
+
+                <label class="label">{"Snapshot from"}</label>
+                <div class="file has-name is-right is-fullwidth">
+                  <label class="file-label">
+                    <input class="file-input" type="text" name="resume" />
+                    <span class="file-cta">
+                      <span class="file-icon"><ion-icon name="folder-outline"></ion-icon></span>
+                      <span class="file-label">{"Choose a directory…"}</span>
+                    </span>
+                    <span class="file-name">{snap.from_dir.clone()}</span>
+                  </label>
+                </div>
+
+                <label class="label">{"Snapshot to"}</label>
+                <div class="file has-name is-right is-fullwidth">
+                  <label class="file-label">
+                    <input class="file-input" type="text" name="resume" />
+                    <span class="file-cta">
+                      <span class="file-icon"><ion-icon name="folder-outline"></ion-icon></span>
+                      <span class="file-label">{"Choose a directory…"}</span>
+                    </span>
+                    <span class="file-name">{snap.to_dir.clone()}</span>
+                  </label>
+                </div>
+
             </div>
+        </div>
+    }).collect::<Html>();
 
-            <p>{"Click on the Tauri and Yew logos to learn more."}</p>
-
-            <p>
-                {"Recommended IDE setup: "}
-                <a href="https://code.visualstudio.com/" target="_blank">{"VS Code"}</a>
-                {" + "}
-                <a href="https://github.com/tauri-apps/tauri-vscode" target="_blank">{"Tauri"}</a>
-                {" + "}
-                <a href="https://github.com/rust-lang/rust-analyzer" target="_blank">{"rust-analyzer"}</a>
-            </p>
-
-            <div class="row">
-                <input id="greet-input" ref={&*greet_input_ref} placeholder="Enter a name..." />
-                <button type="button" onclick={greet}>{"Greet"}</button>
+    html! {
+        <>
+        <section class="hero is-small is-primary">
+            <div class="hero-body">
+                <p class="title">{"Snappy"}</p>
             </div>
-
-            <p><b>{ &*greet_msg }</b></p>
-        </main>
+        </section>
+        <section class="section">
+            {snap_html}
+        </section>
+        </>
     }
 }

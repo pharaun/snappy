@@ -1,14 +1,10 @@
 [package]
 name = "snappy"
 version = "0.0.0"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
+authors = ["Anja Berens <pharaun666@gmail.com>"]
+license = "Apache-2.0"
 edition = "2021"
 rust-version = "1.57"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
 tauri-build = { version = "1.0.0", features = [] }
